@@ -2,6 +2,7 @@ package shiro
 
 
 import grails.artefact.Interceptor
+import grails.core.ArtefactHandler
 
 /*
  * Copyright 2007 Peter Ledbrook.
@@ -54,7 +55,7 @@ import static javax.servlet.DispatcherType.REQUEST
 class ShiroGrailsPlugin extends Plugin {
 
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "4.0.0 > *"
+    def grailsVersion = "6.0.0 > *"
     // resources that are excluded from plugin packaging
     def pluginExcludes = []
 
@@ -78,7 +79,7 @@ Enables Grails applications to take advantage of the Apache Shiro security layer
     def observe = ["controllers"]
     def watchedResources = "file:./grails-app/realms/**/*Realm.groovy"
 
-    def artefacts = [org.apache.shiro.grails.RealmArtefactHandler]
+    List<Class<ArtefactHandler>> artefacts = [RealmArtefactHandler]
 
     final static log = LoggerFactory.getLogger(ShiroGrailsPlugin)
     private List<String> realmBeanNames = []
@@ -96,7 +97,7 @@ Enables Grails applications to take advantage of the Apache Shiro security layer
             }
 
             //Replace the GrailsExceptionResolver to catch authentication errors
-            boolean handleExceptions = grailsApplication.config.getProperty('security.shiro.handleExceptions', boolean, true)
+            boolean handleExceptions = grailsApplication.config.getProperty('security.shiro.handleExceptions', Boolean, true)
             if (handleExceptions) {
                 exceptionResolver(ShiroGrailsExceptionResolver) {
                     exceptionMappings = ['java.lang.Exception': '/error']

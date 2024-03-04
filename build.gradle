@@ -3,59 +3,46 @@ buildscript {
         grailsVersion = project.grailsVersion
         shiroVersion = "1.7.1"
     }
-    repositories {
-        mavenLocal()
-        maven { url "https://repo.grails.org/grails/core" }
-        maven { url "https://dl.bintray.com/jfrog/jfrog-jars" }
-    }
-    dependencies {
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
-        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2"
-    }
 }
 
-version "4.4"
-group "org.grails.plugins"
+plugins {
+    id 'groovy'
+    id 'eclipse'
+    id 'idea'
+    id 'org.grails.grails-plugin'
+//    id 'org.grails.grails-plugin-publish'
+    id 'org.grails.grails-gsp'
+    id 'org.asciidoctor.jvm.convert'
+    id 'application'
+}
 
-apply plugin: "eclipse"
-apply plugin: "idea"
-apply plugin: "org.grails.grails-plugin"
-apply plugin: "org.grails.grails-plugin-publish"
-apply plugin: "org.grails.grails-gsp"
-apply plugin: 'org.asciidoctor.convert'
+version "6.0-SNAPSHOT"
+group "org.grails.plugins"
 
 repositories {
     mavenLocal()
     maven { url "https://repo.grails.org/grails/core" }
-    maven { url "https://dl.bintray.com/jfrog/jfrog-jars" }
-}
-
-configurations {
-    developmentOnly
-    runtimeClasspath {
-        extendsFrom developmentOnly
-    }
+    maven { url "https://repo.grails.org/grails/plugins" }
+    mavenCentral()
 }
 
 dependencies {
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    compile "org.springframework.boot:spring-boot-starter-logging"
-    compile "org.springframework.boot:spring-boot-autoconfigure"
-    compile "org.springframework.boot:spring-boot-starter-actuator"
-    compile "org.springframework.boot:spring-boot-starter-tomcat"
-    compile "org.grails:grails-plugin-url-mappings"
-    compile "org.grails:grails-plugin-interceptors"
-    compile "org.mindrot:jbcrypt:0.4"
+    implementation 'io.github.virtualdogbert:logback-groovy-config:1.12.4'
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-tomcat"
+    implementation "org.grails:grails-plugin-url-mappings"
+    implementation "org.grails:grails-plugin-interceptors"
+    implementation "org.mindrot:jbcrypt:0.4"
     console "org.grails:grails-console"
     compileOnly "io.micronaut:micronaut-inject-groovy"
-    profile "org.grails.profiles:web-plugin"
-    testCompile "org.grails:grails-gorm-testing-support"
-    testCompile "org.mockito:mockito-core"
-    testCompile "org.grails:grails-web-testing-support"
+    testImplementation "org.grails:grails-gorm-testing-support"
+    testImplementation "org.mockito:mockito-core"
+    testImplementation "org.grails:grails-web-testing-support"
 
     ['ehcache', 'core', 'spring', 'web'].each { pkg ->
-        compile("org.apache.shiro:shiro-$pkg:$shiroVersion") {
+        implementation("org.apache.shiro:shiro-$pkg:$shiroVersion") {
             exclude module: 'ejb'
             exclude module: 'jsf-api'
             exclude module: 'servlet-api'
@@ -70,6 +57,15 @@ dependencies {
     }
 }
 
+application {
+    mainClass.set('shiro.Application')
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion('11')
+    targetCompatibility = JavaVersion.toVersion('11')
+}
+
 bootRun {
     jvmArgs('-Dspring.output.ansi.enabled=always')
     sourceResources sourceSets.main
@@ -80,7 +76,7 @@ bootRun {
 // enable if you wish to package this plugin as a standalone application
 bootJar.enabled = false
 
-grailsPublish {
+/*grailsPublish {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
     userOrg = 'nerderg'
@@ -93,9 +89,9 @@ grailsPublish {
     title = "Grails shrio plugin"
     desc = "Secure your Grails application quickly and easily using the Apache Shiro security framework."
     developers = [pmcneil: "Peter McNeil", pledbrook: "Peter Ledbrook", yellowsnow: "yellowsnow"]
-}
+}*/
 
-task shiroTest(type: Test) {
+tasks.register('shiroTest', Test) {
     dependsOn "install"
     //clean up anything left behind
     doFirst {
@@ -137,9 +133,9 @@ task shiroTest(type: Test) {
         //add the plugin
         File build = new File("$projectDir/src/test/app/shiro-tester/build.gradle")
         String content = build.text.replaceFirst('\ndependencies \\{', """dependencies {
-    compile "org.grails.plugins:grails-shiro:4.3" 
-    testCompile "net.sourceforge.htmlunit:htmlunit:2.32"
-    testRuntime "org.seleniumhq.selenium:htmlunit-driver:2.32.1"
+    implementation "org.grails.plugins:grails-shiro:6.0-SNAPSHOT" 
+    testImplementation "net.sourceforge.htmlunit:htmlunit:2.32"
+    testRuntimeOnly "org.seleniumhq.selenium:htmlunit-driver:2.32.1"
 """)
         content = content.replaceAll(/repositories \{/, '''repositories {
 mavenLocal()''')
@@ -215,7 +211,7 @@ security:
     }
 }
 
-task shiroCliTest(type: Test) {
+tasks.register('shiroCliTest', Test) {
     dependsOn "install"
     //clean up anything left behind
     doFirst {

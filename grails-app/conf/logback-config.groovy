@@ -1,5 +1,8 @@
 import grails.util.BuildSettings
 import grails.util.Environment
+import ch.qos.logback.core.ConsoleAppender
+import ch.qos.logback.core.FileAppender
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 
 
 // See http://logback.qos.ch/manual/groovy.html for details on configuration
