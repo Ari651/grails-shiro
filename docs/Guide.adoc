@@ -5,7 +5,7 @@ v4.1, August 2019
 :toc-class: toc2
 :icons: font
 :imagesdir: resources/images/
-:stylesdir: resources/style/
+:stylesdir: docs/resources/style/
 :stylesheet: asciidoctor.css
 :description: Grails Shiro plugin guide
 :keywords: documentation, Grails, Shiro
