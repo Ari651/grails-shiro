@@ -10,7 +10,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'org.grails.grails-plugin'
-//    id 'org.grails.grails-plugin-publish'
+    id 'maven-publish'
     id 'org.grails.grails-gsp'
     id 'org.asciidoctor.jvm.convert'
     id 'application'
@@ -90,6 +90,50 @@ bootJar.enabled = false
     desc = "Secure your Grails application quickly and easily using the Apache Shiro security framework."
     developers = [pmcneil: "Peter McNeil", pledbrook: "Peter Ledbrook", yellowsnow: "yellowsnow"]
 }*/
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                name = "Grails Shiro Plugin for Grails 6+"
+                description = "Secure your Grails application quickly and easily using the Apache Shiro security framework."
+                url = "http://github.com/Ari651/grails-shiro"
+                licenses {
+                    license {
+                        name = 'The Apache License, version 2.0'
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'pmcneil'
+                        name = 'Peter McNeil'
+                    }
+                    developer {
+                        id = 'pledbrook'
+                        name = 'Peter Ledbrook'
+                    }
+                    developer {
+                        id = 'yellowsnow'
+                    }
+                    developer {
+                        id = 'ari651'
+                        name = 'Ari Bustamante'
+                        email = 'ari.bustamante@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/Ari651/grails-shiro.git'
+                    developerConnection = 'scm:git:ssh://github.com/Ari651/grails-shiro.git'
+                    url = 'https://github.com/Ari651/grails-shiro/'
+                }
+            }
+        }
+    }
+}
 
 tasks.register('shiroTest', Test) {
     dependsOn "install"
